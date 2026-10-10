@@ -1,0 +1,61 @@
+{
+  "info": {
+    "name": "Experiment 4 - Create and Delete Specific Product",
+    "description": "Creates a product, deletes it by its generated productId, then verifies the API no longer returns it.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "productId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Create product",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productName\": \"Lab Sample Product\",\n  \"category\": \"Electronics\",\n  \"description\": \"Created for Experiment 4\",\n  \"price\": 1299.99,\n  \"stock\": 10,\n  \"imageUrl\": \"https://example.com/product.jpg\",\n  \"rating\": 4.5,\n  \"status\": \"ACTIVE\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/api/products"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Product was created', function () { pm.response.to.have.status(200); });",
+          "const product = pm.response.json();",
+          "pm.expect(product.productId).to.exist;",
+          "pm.collectionVariables.set('productId', product.productId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Delete created product",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/products/{{productId}}"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Product was deleted', function () { pm.response.to.have.status(200); });"
+        ] }
+      }]
+    },
+    {
+      "name": "Verify product is gone",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/products/{{productId}}"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Deleted product returns 404', function () { pm.response.to.have.status(404); });"
+        ] }
+      }]
+    }
+  ]
+}
