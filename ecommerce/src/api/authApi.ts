@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { SignupRequest, SigninRequest, AuthResponse } from "../types/auth";
 
-const API_URL = "http://localhost:8080/api/auth";
+const API_URL = `${import.meta.env.VITE_API_URL ?? "http://localhost:8080"}/api/auth`;
 
 // Configure axios to send cookies with every request (for session-based auth)
 const authAxios = axios.create({

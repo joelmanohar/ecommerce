@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const WEBSOCKET_URL = `${API_BASE_URL.replace(/^http/, "ws")}/ws-smartcart`;
+
 type Job = {
   jobId: number;
   orderId: number;
@@ -18,7 +21,7 @@ function BackgroundJobMonitor() {
 
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:8080/api/jobs", {
+    fetch(`${API_BASE_URL}/api/jobs`, {
       credentials: "include",
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {})
@@ -33,7 +36,7 @@ function BackgroundJobMonitor() {
       .catch(console.error);
 
     const client = new Client({
-      brokerURL: "ws://localhost:8080/ws-smartcart",
+      brokerURL: WEBSOCKET_URL,
       reconnectDelay: 5000,
 
       onConnect: () => {
