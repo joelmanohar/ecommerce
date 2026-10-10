@@ -1,6 +1,7 @@
 package com.klu.service;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import com.klu.model.Product;
 import com.klu.repository.ProductRepository;
@@ -13,6 +14,10 @@ public class ProductService {
     }
     public Product addProduct(          Product product   ) {
         return productRepository.save(product);
+    }
+    @Transactional
+    public List<Product> addProducts(List<Product> products) {
+        return productRepository.saveAll(products);
     }
     public List<Product> getAllProducts() {
         return productRepository.findAll();
